@@ -1,0 +1,22 @@
+@font-face {
+  font-family: 'text';
+  src: url('/Font/FiraSans-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'bold';
+  src: url('/Font/FiraSans-SemiBold.ttf') format('truetype');
+}
+
+.app {
+  display: grid;
+  grid-template-rows: 80px auto;
+}
+
+body {
+  font-family: 'text', sans-serif;
+}
+
+h1, h2, h3 {
+  font-family: 'bold', sans-serif;
+}
