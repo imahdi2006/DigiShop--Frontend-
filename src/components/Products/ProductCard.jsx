@@ -1,17 +1,25 @@
-import React from "react";
-import "./ProductCard.css";
+import React, { useContext } from "react";
 
-import iphone from "../../assets/iphone.jpg";
+import "./ProductCard.css";
+import config from "../../config.json";
 import star from "../../assets/white-star.png";
 import basket from "../../assets/basket.png";
+import { NavLink } from "react-router-dom";
+import CartContext from "../../contexts/CartContext";
+import UserContext from "../../contexts/UserContext";
 
 const ProductCard = ({ product }) => {
+  const { addToCart } = useContext(CartContext);
+  const user = useContext(UserContext);
   return (
     <article className="product_card">
       <div className="product_image">
-        <a href="product/1">
-          <img src={iphone} alt="product image" />
-        </a>
+        <NavLink to={`/product/${product?._id}`}>
+          <img
+            src={`${config.backendURL}/products/${product?.images[0]}`}
+            alt="product image"
+          />
+        </NavLink>
       </div>
 
       <div className="product_details">
@@ -24,9 +32,14 @@ const ProductCard = ({ product }) => {
             </p>
             <p className="product_review_count"> {product?.reviews.counts}</p>
           </div>
-          <button className="add_to_card">
-            <img src={basket} alt="" />
-          </button>
+          {product?.stock > 0 && user && (
+            <button
+              className="add_to_cart"
+              onClick={() => addToCart(product, 1)}
+            >
+              <img src={basket} alt="basket button" />
+            </button>
+          )}
         </footer>
       </div>
     </article>

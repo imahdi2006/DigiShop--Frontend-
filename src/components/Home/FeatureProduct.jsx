@@ -6,7 +6,6 @@ import ProductsCardSkeleton from "../Products/ProductsCardSkeleton";
 
 const FeatureProduct = () => {
   const { data, error, isLoading } = useData("/products/featured");
-  console.log(data)
   const skeletons = [1, 2, 3];
   return (
     <section className="feature_products">
