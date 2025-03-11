@@ -1,9 +1,12 @@
 // Import necessary React hooks and components
 import React, { useEffect, useState } from "react";
-import "./ProductsList.css";
+
+import "./ProductsList.css"
+
 import ProductCard from "./../Home/ProductCard";
 import useData from "../../hooks/useData";
 import { useSearchParams } from "react-router-dom";
+
 // for loading
 import ProductsCardSkeleton from "./ProductsCardSkeleton";
 
@@ -14,7 +17,10 @@ const ProductsList = () => {
   // State for managing current page number
   const [page, setPage] = useState(1);
 
+  //  State for managing sorting criteria
   const [sortBy, setsortBy] = useState("");
+
+  // State for managing sorted products
   const [sortedProducts, setsortedProducts] = useState([]);
 
   // Get and set URL search parameters
