@@ -1,8 +1,6 @@
 // Import necessary React hooks and components
 import React, { useEffect, useState } from "react";
-
 import "./ProductsList.css"
-
 import ProductCard from "./../Home/ProductCard";
 import useData from "../../hooks/useData";
 import { useSearchParams } from "react-router-dom";
