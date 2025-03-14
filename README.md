@@ -1,3 +1,4 @@
+
 SHOPINOU - E-commerce Platform
 SHOPINOU is a modern e-commerce platform built with React (Frontend) and Node.js + Express (Backend). The backend provides a RESTful API, and the entire project is designed to offer a seamless shopping experience.
 
