@@ -7,6 +7,7 @@
   padding: 32px 48px;
   margin-top: 32px;
   background-color: #fff;
+  border-radius: 16px;
 }
 
 .authentication_form h2 {
@@ -24,7 +25,7 @@
 .form_inputs label {
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 3px;
+  margin-bottom: 12px;
 }
 
 .form_text_input {
@@ -45,4 +46,18 @@ em {
   margin-top: 5px;
   color: red;
   font-size: 14px;
+}
+
+.form_link {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.form_link a {
+  color: #2c65f6;
+  text-decoration: none;
+}
+
+.form_link a:hover {
+  text-decoration: underline;
 }

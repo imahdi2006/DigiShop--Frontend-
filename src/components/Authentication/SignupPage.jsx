@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { getUser, signup } from "../../services/userServices";
 import { Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const schema = z
   .object({
@@ -49,8 +50,8 @@ const SignupPage = () => {
     }
   };
 
-  if(getUser()) {
-    return <Navigate to="/" />
+  if (getUser()) {
+    return <Navigate to="/" />;
   }
 
   return (
@@ -148,6 +149,11 @@ const SignupPage = () => {
         <button className="search_button form_submit" type="submit">
           Submit
         </button>
+        <div className="form_link">
+          <p>
+            Already have an account? <Link to="/login">Login here</Link>
+          </p>
+        </div>
       </form>
     </section>
   );

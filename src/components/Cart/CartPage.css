@@ -11,13 +11,6 @@
   margin-bottom: 32px;
 }
 
-.user_info img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 100%;
-}
-
 .user_name {
   font-size: 21px;
   font-weight: 600;

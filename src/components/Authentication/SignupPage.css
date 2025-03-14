@@ -9,8 +9,8 @@
 }
 
 .image_preview {
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     border-radius: 100%;
     overflow: hidden;
     margin-bottom: 15px;  
@@ -74,5 +74,19 @@ em {
     margin-top: 5px;
     color: red;
     font-size: 14px;
+  }
+  
+  .form_link {
+    margin-top: 15px;
+    text-align: center;
+  }
+  
+  .form_link a {
+    color: #2c65f6;
+    text-decoration: none;
+  }
+  
+  .form_link a:hover {
+    text-decoration: underline;
   }
   

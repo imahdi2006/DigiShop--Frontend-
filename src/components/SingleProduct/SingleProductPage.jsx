@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { memo, useContext, useEffect, useState } from "react";
 import "./SingleProductPage.css";
 import QuantityInput from "./QuantityInput";
 import config from "../../config.json";
@@ -12,12 +12,30 @@ import { useNavigate } from "react-router-dom";
 const SingleProductPage = () => {
   const [selectedImage, setselectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [showAddedIcon, setShowAddedIcon] = useState(false);
   const { id } = useParams();
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, removeFromCart, cart } = useContext(CartContext);
   const user = useContext(UserContext);
   const navigate = useNavigate();
 
   const { data: product, error, isLoading } = useData(`/products/${id}`);
+  const [isInCart, setIsInCart] = useState(false);
+
+  useEffect(() => {
+    if (product && cart) {
+      const itemInCart = cart.find((item) => item.product._id === product._id);
+      setIsInCart(!!itemInCart);
+      if (itemInCart) {
+        setQuantity(itemInCart.quantity);
+      }
+    }
+  }, [cart, product]);
+
+  const handleRemoveFromCart = () => {
+    removeFromCart(product._id);
+    setQuantity(1); // Reset quantity to 1 when removing from cart
+    setIsInCart(false);
+  };
 
   return (
     <section className="align_center single_product">
@@ -55,15 +73,35 @@ const SingleProductPage = () => {
                 <h2 className="quntity_title">Quantity : </h2>
                 <QuantityInput
                   quantity={quantity}
-                  setQuantity={setQuantity}
+                  setQuantity={(newQuantity) => {
+                    setQuantity(newQuantity);
+                    setIsInCart(false); // Reset to Add to Cart state when quantity changes
+                  }}
                   stock={product.stock}
                 />
-                <button
-                  className="search_button add_cart"
-                  onClick={() => addToCart(product, quantity)}
-                >
-                  Add to Cart
-                </button>
+                {!isInCart ? (
+                  <button
+                    className="search_button add_cart"
+                    onClick={() => {
+                      addToCart(product, quantity);
+                      setShowAddedIcon(true);
+                      setTimeout(() => setShowAddedIcon(false), 2000);
+                    }}
+                    disabled={product.stock === 0}
+                  >
+                    {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                  </button>
+                ) : (
+                  <div className="cart_actions">
+                    <button
+                      className="search_button remove_cart"
+                      onClick={handleRemoveFromCart}
+                    >
+                      Remove from Cart
+                    </button>
+                  </div>
+                )}
+                
               </>
             ) : (
               <button
@@ -80,4 +118,4 @@ const SingleProductPage = () => {
   );
 };
 
-export default SingleProductPage;
+export default memo(SingleProductPage);

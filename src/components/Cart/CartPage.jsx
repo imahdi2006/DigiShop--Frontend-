@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { memo, useContext, useMemo } from "react";
 import "./CartPage.css";
 import Table from "../Common/Table";
 import QuantityInput from "./../SingleProduct/QuantityInput";
 import UserContext from "../../contexts/UserContext";
-import config from "../../config.json";
 
 // img
 import remove from "../../assets/remove.png";
@@ -12,16 +11,15 @@ import { checkoutAPI } from "../../services/orderServices";
 import { toast } from "react-toastify";
 
 const CartPage = () => {
-  const [subtotal, setsubtotal] = useState(0);
   const user = useContext(UserContext);
   const { cart, removeFromCart, updateCart, setcart } = useContext(CartContext);
 
-  useEffect(() => {
+  const subTotal = useMemo(() => {
     let total = 0;
     cart.forEach((item) => {
       total += item.product.price * item.quantity;
     });
-    setsubtotal(total);
+    return total;
   }, [cart]);
 
   const checkout = () => {
@@ -40,10 +38,6 @@ const CartPage = () => {
   return (
     <section className="align_center cart_page">
       <div className="align_center user_info">
-        <img
-          src={`${config.backendURL}/profile/${user?.profilePic}`}
-          alt="user"
-        />
         <div className="">
           <p className="user_name">{user?.name}</p>
           <p className="user_email">{user?.email}</p>
@@ -83,7 +77,7 @@ const CartPage = () => {
         <tbody>
           <tr>
             <td>Subtotal</td>
-            <td>${subtotal}</td>
+            <td>${subTotal}</td>
           </tr>
           <tr>
             <td>Shipping Charge</td>
@@ -91,7 +85,7 @@ const CartPage = () => {
           </tr>
           <tr className="cart_bill_final">
             <td>Total</td>
-            <td>${subtotal + 5}</td>
+            <td>${subTotal + 5}</td>
           </tr>
         </tbody>
       </table>
@@ -102,4 +96,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;
+export default memo(CartPage);

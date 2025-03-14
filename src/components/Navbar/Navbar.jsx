@@ -16,6 +16,7 @@ const Navbar = () => {
   const [search, setsearch] = useState("");
   const [suggestions, setsuggestions] = useState([]);
   const [selectedItem, setselectedItem] = useState(-1);
+  const [isFocused, setIsFocused] = useState(false);
   const navigate = useNavigate();
   const user = useContext(UserContext);
   const { cart } = useContext(CartContext);
@@ -66,7 +67,7 @@ const Navbar = () => {
   return (
     <nav className="align_center navbar">
       <div className="align_center">
-        <h1 className="navbar_heading">DigiShop</h1>
+        <h1 className="navbar_heading">SHOPINOU</h1>
         <form className="align_center navbar_form" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -75,11 +76,15 @@ const Navbar = () => {
             value={search}
             onChange={(e) => setsearch(e.target.value)}
             onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => {
+              setIsFocused(false);
+            }}
           />
           <button type="submit" className="search_button">
             Search
           </button>
-          {suggestions.length > 0 && (
+          {suggestions.length > 0 && isFocused && (
             <ul className="search_result">
               {suggestions.map((suggestion, index) => (
                 <li

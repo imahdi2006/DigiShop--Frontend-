@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getUser, login } from "../../services/userServices";
 import { Navigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const schema = z.object({
   email: z.string().email({ message: "please enter a valid email" }),
@@ -15,7 +16,7 @@ const schema = z.object({
 
 const LoginPage = () => {
   const [formError, setFormError] = useState("");
-  const location = useLocation()
+  const location = useLocation();
 
   const {
     register,
@@ -26,7 +27,7 @@ const LoginPage = () => {
   const onSubmit = async (formData) => {
     try {
       await login(formData);
-      const {state} = location
+      const { state } = location;
       window.location = state ? state.from : "/";
     } catch (err) {
       if (err.response && err.response.status === 400) {
@@ -35,8 +36,8 @@ const LoginPage = () => {
     }
   };
 
-  if(getUser()) {
-    return <Navigate to="/" />
+  if (getUser()) {
+    return <Navigate to="/" />;
   }
 
   return (
@@ -74,6 +75,11 @@ const LoginPage = () => {
           <button type="submit" className="search_button form_submit">
             Submit
           </button>
+          <div className="form_link">
+            <p>
+              Don't have an account? <Link to="/signup">Create one here</Link>
+            </p>
+          </div>
         </div>
       </form>
     </section>

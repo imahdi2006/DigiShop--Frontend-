@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useReducer } from "react";
 import "./App.css";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -16,13 +16,14 @@ import {
 } from "./services/cartServices";
 import "react-toastify/dist/ReactToastify.css";
 import CartContext from "./contexts/CartContext";
+import cartReducer from "./Reducers/cartReducer";
 
 setAuthToken(getJwt());
 
 export const App = () => {
   // jwt decode
   const [user, setuser] = useState(null);
-  const [cart, setcart] = useState([]);
+  const [cart, dispatchCart] = useReducer(cartReducer, []);
 
   useEffect(() => {
     try {
@@ -36,90 +37,86 @@ export const App = () => {
     } catch (error) {}
   }, []);
 
-  const addToCart = (product, quantity) => {
-    const updatedCart = [...cart];
-    const productIndex = updatedCart.findIndex(
-      (item) => item.product._id === product._id
-    );
-    if (productIndex === -1) {
-      updatedCart.push({ product, quantity });
-    } else {
-      updatedCart[productIndex].quantity += quantity;
-    }
-    setcart(updatedCart);
-    addToCartAPI(product._id, quantity)
-      .then((res) => {
-        toast.success("Product added to cart");
-      })
-      .catch((err) => {
-        toast.error("Error adding product to cart");
-        setcart(cart);
-      });
-  };
-
-  const removeFromCart = (id) => {
-    const oldCart = [...cart];
-    const newCart = oldCart.filter((item) => item.product._id !== id);
-    setcart(newCart);
-
-    removeFromCartAPI(id)
-      .then((res) => {
-        toast.success("Product removed from cart");
-      })
-      .catch((err) => {
-        toast.error("Error removing product from cart");
-        setcart(oldCart);
-      });
-  };
-
-  const updateCart = (type, id) => {
-    const oldCart = [...cart];
-    const updatedCart = [...cart];
-    const productIndex = updatedCart.findIndex(
-      item => item.product._id === id
-    );
-
-    if (type === "increase") {
-      updatedCart[productIndex].quantity += 1;
-      setcart(updatedCart);
-      increaseProductAPI(id)
-      .then((res) => {
-        // Update local storage to persist data
-        localStorage.setItem('cart', JSON.stringify(updatedCart));
-        toast.success("Product quantity increased");
-      })
-        .catch((err) => {
-          toast.error("Error increasing product quantity");
-          setcart(oldCart);
-        });
-    }
-    if (type === "decrease") {
-      const oldCart = [...cart];
-      
-      updatedCart[productIndex].quantity -= 1;
-      setcart(updatedCart);
-    
-      decreaseProductAPI(id)
+  const addToCart = useCallback(
+    (product, quantity) => {
+      dispatchCart({ type: "ADD_TO_CART", payload: { product, quantity } });
+      addToCartAPI(product._id, quantity)
         .then((res) => {
-          localStorage.setItem('cart', JSON.stringify(updatedCart));
-          toast.success("Product quantity decreased");
+          toast.success("Product added to cart");
         })
         .catch((err) => {
-          toast.error("Error decreasing product quantity");
-          setcart(oldCart);
+          toast.error("Error adding product to cart");
+          dispatchCart({ type: "REVERT-CART", payload: { cart } });
         });
-    }
-    }
-    
-  const getCart = () => {
+    },
+    [cart]
+  );
+
+  const removeFromCart = useCallback(
+    (id) => {
+      dispatchCart({ type: "REMOVE-FROM-CART", payload: { id } });
+
+      removeFromCartAPI(id)
+        .then((res) => {
+          toast.success("Product removed from cart");
+        })
+        .catch((err) => {
+          toast.error("Error removing product from cart");
+          dispatchCart({ type: "REVERT-CART", payload: { cart } });
+        });
+    },
+    [cart]
+  );
+
+  const updateCart = useCallback(
+    (type, id) => { 
+      const updatedCart = [...cart];
+      const productIndex = updatedCart.findIndex(
+        (item) => item.product._id === id
+      );
+
+      if (type === "increase") {
+        updatedCart[productIndex].quantity += 1;
+        dispatchCart({ type: "GET_CART", payload: { product: updatedCart } });
+        increaseProductAPI(id)
+          .then((res) => {
+            // Update local storage to persist data
+            localStorage.setItem("cart", JSON.stringify(updatedCart));
+            toast.success("Product quantity increased");
+          })
+          .catch((err) => {
+            toast.error("Error increasing product quantity");
+            dispatchCart({ type: "REVERT-CART", payload: {cart } });
+          });
+      }
+      if (type === "decrease") {
+        updatedCart[productIndex].quantity -= 1;
+        dispatchCart({ type: "GET_CART", payload: { product: updatedCart } });
+
+        decreaseProductAPI(id)
+          .then((res) => {
+            localStorage.setItem("cart", JSON.stringify(updatedCart));
+            toast.success("Product quantity decreased");
+            getCart();
+          })
+          .catch((err) => {
+            toast.error("Error decreasing product quantity");
+            dispatchCart({ type: "REVERT-CART", payload: {cart } });
+          });
+      }
+    },
+    [cart]
+  );
+
+  const getCart = useCallback(() => {
     getCartAPI()
       .then((res) => {
-        setcart(res.data);
+        dispatchCart({ type: "GET_CART", payload: { product: res.data } });
       })
       .catch((err) => {
         toast.error("Something went wrong");
       });
-  };
+  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -130,12 +127,15 @@ export const App = () => {
   return (
     <UserContext.Provider value={user}>
       <CartContext.Provider
-        value={{ cart, addToCart, removeFromCart, updateCart, setcart }}
+        value={{ cart, addToCart, removeFromCart, updateCart }}
       >
         <div className="app">
           <Navbar />
           <main>
-            <ToastContainer style={{ marginTop: "70px" }}  position="top-right" />
+            <ToastContainer
+              style={{ marginTop: "70px" }}
+              position="top-right"
+            />
             <Routing />
           </main>
         </div>
