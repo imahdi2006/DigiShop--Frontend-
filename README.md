@@ -1,6 +1,6 @@
-# DigiShop - E-commerce Platform
+# SHOPINOU - E-commerce Platform
 
-DigiShop is a modern e-commerce platform built with React for the frontend and Node.js with Express for the backend. The backend provides a RESTful API, and the entire project is designed to offer a seamless shopping experience. The live version of the project is deployed at:
+SHOPINOU is a modern e-commerce platform built with React for the frontend and Node.js with Express for the backend. The backend provides a RESTful API, and the entire project is designed to offer a seamless shopping experience. The live version of the project is deployed at:
 
 🔗 [Live Demo](https://shopinou.netlify.app)
 
